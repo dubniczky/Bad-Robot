@@ -6,10 +6,12 @@ import requests
 
 
 TARGET_DIR = 'target'
+REQUEST_TIMEOUT = 5
+SUBFOLDER_REPLACE = '--'
 
 
 def get_domain_rules(domain):
-    res = requests.get(f'{domain}/robots.txt')
+    res = requests.get(f'{domain}/robots.txt', timeout=REQUEST_TIMEOUT)
     if res.status_code == 200:
         return res.text
     return None
@@ -39,10 +41,10 @@ def clean_target(path):
 def download_paths(domain, paths, local):
     for path in paths:
         url = f'{domain}{path}'
-        res = requests.get(url)
+        res = requests.get(url, timeout=REQUEST_TIMEOUT)
         if res.status_code == 200:
-            print(f'[+] Found {url}')
-            with open(f'{local}/{path.replace("/", "--").strip("-")}', 'w', encoding='utf8') as f:
+            print(f'[+] {url}')
+            with open(f'{local}/{path.replace("/", SUBFOLDER_REPLACE).strip("-")}', 'w', encoding='utf8') as f:
                 f.write(res.text)
         else:
             print(f'[-] {url} returned {res.status_code}')
@@ -60,6 +62,7 @@ def main():
     if rule_file is None:
         print(f'No robots.txt found at {domain}/robots.txt')
         sys.exit(1)
+    print(f'Found robots.txt at {domain}/robots.txt')
     
     # Filter relevant rules
     disallows = filter_disallow_rules(rule_file.splitlines())
@@ -68,6 +71,7 @@ def main():
         r'[=]', # = is used for paths with specific arguments
     ]
     disallows = filter_paths(disallows, filters)
+    print(f'Found robots.txt at {domain}/robots.txt')
     
     # Prepare target directory
     clean_target(TARGET_DIR)
