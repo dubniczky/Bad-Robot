@@ -4,6 +4,14 @@ This is a python crawler that disregards robots.txt rules and downloads disallow
 
 ## Usage
 
+Install dependencies:
+
+```bash
+make install
+```
+
+Run:
+
 ```bash
 python badrobot.py <domain>
 ```
