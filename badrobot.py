@@ -12,6 +12,31 @@ REQUEST_TIMEOUT = 5
 SUBFOLDER_REPLACE = '--'
 
 
+class colors:
+    # Special
+    reset      = '\033[0m'
+    # Foreground
+    black      = '\033[30m'
+    blue       = '\033[34m'
+    cyan       = '\033[36m'
+    darkgrey   = '\033[90m'
+    green      = '\033[32m'
+    lightblue  = '\033[94m'
+    lightcyan  = '\033[96m'
+    lightgreen = '\033[92m'
+    lightgrey  = '\033[37m'
+    lightred   = '\033[91m'
+    orange     = '\033[33m'
+    pink       = '\033[95m'
+    purple     = '\033[35m'
+    red        = '\033[31m'
+    yellow     = '\033[93m'
+    
+
+def color(text, color):
+    return color + str(text) + colors.reset
+
+
 def get_domain_rules(domain):
     res = requests.get(f'{domain}/robots.txt', timeout=REQUEST_TIMEOUT)
     if res.status_code == 200:
@@ -45,11 +70,11 @@ def download_paths(domain, paths, local):
         url = f'{domain}{path}'
         res = requests.get(url, timeout=REQUEST_TIMEOUT)
         if res.status_code == 200:
-            print(f'[+] {url}')
+            print(f'[ {color(res.status_code, colors.green)} ] {url}')
             with open(f'{local}/{path.replace("/", SUBFOLDER_REPLACE).strip("-")}', 'w', encoding='utf8') as f:
                 f.write(res.text)
         else:
-            print(f'[-] {url} returned {res.status_code}')
+            print(f'[ {color(res.status_code, colors.red)} ] {url}')
 
 
 def main():
@@ -81,8 +106,8 @@ def main():
         f.write(rule_file)
         
     download_paths(domain, disallows, TARGET_DIR)
-    
-    
+
+
 
 
 if __name__ == '__main__':
