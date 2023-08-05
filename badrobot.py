@@ -28,7 +28,7 @@ def filter_disallow_rules(rules):
 def filter_paths(paths, filters):
     res = paths[:]
     for f in filters:
-        res = list(filter(lambda p: not re.search(f, p), res))
+        res = list(filter(lambda p, filt=f: not re.search(filt, p), res))
     return res
 
 
